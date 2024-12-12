@@ -1,0 +1,8 @@
+{
+    "workbench.colorCustomizations": {
+        "editor.commentForeground": "#00FF00",
+        "activityBar.background": "#023606",
+        "titleBar.activeBackground": "#034C09",
+        "titleBar.activeForeground": "#F0FEF2"
+    }
+}
