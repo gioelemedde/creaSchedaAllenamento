@@ -3,20 +3,25 @@ import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-
-// Opzioni video predefinite
+// Video options with expanded keywords for better filtering
 const VIDEO_OPTIONS = {
-  "Panca": "http://example.com/campo",
-  "Addome": "http://example.com/esercizio1",
-  "Bicipiti": "http://example.com/esercizio2",
+  "Panca Piana": "http://example.com/panca-piana",
+  "Panca Inclinata": "http://example.com/panca-inclinata", 
+  "Panca Declinata": "http://example.com/panca-declinata",
+  "Addominali Crunch": "http://example.com/crunch",
+  "Addominali Planking": "http://example.com/planking",
+  "Bicipiti Curl Manubri": "http://example.com/bicipiti-curl",
+  "Bicipiti Curl Bilanciere": "http://example.com/bicipiti-manubri",
+  "Squat Frontale": "http://example.com/squat",
+  "Squat Posteriore": "http://example.com/squat-posteriore",
+  "Leg Press": "http://example.com/leg-press",
 };
 
 const WorkoutScheduleCreator = () => {
-
-
+  const [isClient, setIsClient] = useState(false);
   const [schedule, setSchedule] = useState({
     title: '',
-    startDate: '', // Impostato con useEffect lato client
+    startDate: '', 
     days: [
       {
         name: 'Day 1',
@@ -25,13 +30,28 @@ const WorkoutScheduleCreator = () => {
     ],
   });
 
+  // Ensure date is only set on client-side to prevent hydration errors
   useEffect(() => {
     setSchedule((prev) => ({
       ...prev,
       startDate: new Date().toISOString().split('T')[0],
     }));
+    setIsClient(true);
   }, []);
 
+  // Filter video options based on exercise name
+  const filterVideoOptions = (exerciseName) => {
+    if (!exerciseName) return VIDEO_OPTIONS;
+    
+    const normalizedName = exerciseName.toLowerCase();
+    return Object.fromEntries(
+      Object.entries(VIDEO_OPTIONS).filter(([name, url]) => 
+        name.toLowerCase().includes(normalizedName)
+      )
+    );
+  };
+
+  // Day management functions
   const addDay = () => {
     setSchedule((prev) => ({
       ...prev,
@@ -50,7 +70,6 @@ const WorkoutScheduleCreator = () => {
       const newDays = [...prev.days];
       const lastExercise = newDays[dayIndex].exercises[newDays[dayIndex].exercises.length - 1];
 
-      // Aggiungi un nuovo esercizio solo se l'ultimo non è vuoto
       if (!lastExercise || lastExercise.name !== '') {
         newDays[dayIndex].exercises.push({
           name: '',
@@ -80,6 +99,7 @@ const WorkoutScheduleCreator = () => {
     });
   };
 
+  // PDF Generation Function
   const generatePDF = () => {
     const pdf = new jsPDF();
   
@@ -93,7 +113,6 @@ const WorkoutScheduleCreator = () => {
         const x = (pageWidth - logoWidth) / 2;
         const y = 10;
   
-        // Imposta lo sfondo nero per la pagina
         pdf.setFillColor(0, 0, 0);
         pdf.rect(0, 0, pageWidth, pdf.internal.pageSize.height, 'F');
   
@@ -107,10 +126,8 @@ const WorkoutScheduleCreator = () => {
   
     let yOffset = addLogo(pdf);
   
-    // Imposta i colori per il testo
-    pdf.setTextColor(255, 255, 255); // Testo bianco
+    pdf.setTextColor(255, 255, 255);
   
-    // Aggiungi il titolo
     pdf.setFontSize(20);
     pdf.text(schedule.title || 'Scheda Allenamento', 20, yOffset);
   
@@ -140,15 +157,15 @@ const WorkoutScheduleCreator = () => {
         styles: {
           fontSize: 12,
           cellPadding: 3,
-          textColor: [255, 255, 255], // Testo bianco
-          fillColor: [0, 0, 0], // Sfondo nero per le celle
+          textColor: [255, 255, 255],
+          fillColor: [0, 0, 0],
         },
         headStyles: {
-          fillColor: [241, 64, 0], // Sfondo arancione per l'intestazione
-          textColor: [255, 255, 255], // Testo bianco per l'intestazione
+          fillColor: [241, 64, 0],
+          textColor: [255, 255, 255],
           halign: 'center',
         },
-        borderColor: [255, 255, 255], // Bordi bianchi
+        borderColor: [255, 255, 255],
         didParseCell: (data) => {
           if (data.cell.raw && typeof data.cell.raw === 'string' && data.cell.raw.startsWith('http')) {
             const url = data.cell.raw;
@@ -174,6 +191,12 @@ const WorkoutScheduleCreator = () => {
   
     pdf.save('scheda-allenamento.pdf');
   };
+
+  // Render only when client-side
+  if (!isClient) {
+    return null;
+  }
+
   return (
     <div className="p-4 max-w-4xl mx-auto">
       {/* Header con titolo e data */}
@@ -189,7 +212,7 @@ const WorkoutScheduleCreator = () => {
           type="date"
           value={schedule.startDate}
           onChange={(e) => setSchedule(prev => ({ ...prev, startDate: e.target.value }))}
-          className="mt-2 w-full p-2 border rounded text-black  bg-slate-100"
+          className="mt-2 w-full p-2 border rounded text-black bg-slate-100"
         />
       </div>
       
@@ -209,63 +232,68 @@ const WorkoutScheduleCreator = () => {
               </tr>
             </thead>
             <tbody>
-              {day.exercises.map((exercise, exerciseIndex) => (
-                <tr key={exerciseIndex}>
-                  <td className="p-2">
-                    <input
-                      type="text"
-                      value={exercise.name}
-                      onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'name', e.target.value)}
-                      placeholder="Nome esercizio"
-                      className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="text"
-                      value={exercise.sets}
-                      onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'sets', e.target.value)}
-                      placeholder="3x12"
-                      className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="text"
-                      value={exercise.restMinutes}
-                      onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'restMinutes', e.target.value)}
-                      placeholder="Minuti riposo"
-                      className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                    />
-                  </td>
-                  <td className="p-2">
-                    <select
-                      value={exercise.videoUrl}
-                      onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'videoUrl', e.target.value)}
-                      className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                    >
-                      <option className='bg-black100'  value="">Seleziona un video</option>
-                      {Object.entries(VIDEO_OPTIONS).map(([name, url]) => (
-                        <option className='bg-black100' key={name} value={url}>{name}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="p-2">
-                    <button
-                      onClick={() => removeExercise(dayIndex, exerciseIndex)}
-                      className="p-2 text-red-500 hover:scale-150 rounded text-xl"
-                    >
-                      ×
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {day.exercises.map((exercise, exerciseIndex) => {
+                // Filtra le opzioni video in base al nome dell'esercizio
+                const filteredVideoOptions = filterVideoOptions(exercise.name);
+
+                return (
+                  <tr key={exerciseIndex}>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={exercise.name}
+                        onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'name', e.target.value)}
+                        placeholder="Nome esercizio"
+                        className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={exercise.sets}
+                        onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'sets', e.target.value)}
+                        placeholder="3x12"
+                        className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={exercise.restMinutes}
+                        onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'restMinutes', e.target.value)}
+                        placeholder="Minuti riposo"
+                        className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <select
+                        value={exercise.videoUrl}
+                        onChange={(e) => updateExercise(dayIndex, exerciseIndex, 'videoUrl', e.target.value)}
+                        className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                      >
+                        <option className='bg-black100' value="">Seleziona un video</option>
+                        {Object.entries(filteredVideoOptions).map(([name, url]) => (
+                          <option className='bg-black100' key={name} value={url}>{name}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="p-2">
+                      <button
+                        onClick={() => removeExercise(dayIndex, exerciseIndex)}
+                        className="p-2 text-red-500 hover:scale-150 rounded text-xl"
+                      >
+                        ×
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           
           <button
             onClick={() => addExercise(dayIndex)}
-            className="mt-4 px-4 py-2   bg-orange-600 text-white rounded-3xl hover:bg-orange-800"
+            className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-3xl hover:bg-orange-800"
           >
             + Aggiungi Esercizio
           </button>
@@ -276,7 +304,7 @@ const WorkoutScheduleCreator = () => {
       <div className="flex gap-4">
         <button
           onClick={addDay}
-          className="px-4 py-2  bg-slate-100 hover:bg-slate-300 text-black  rounded-3xl"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-300 text-black rounded-3xl"
         >
           + Aggiungi Giorno
         </button>
@@ -292,15 +320,3 @@ const WorkoutScheduleCreator = () => {
 };
 
 export default WorkoutScheduleCreator;
-
-
-
-
-
-
-
-
-
-
-
-
