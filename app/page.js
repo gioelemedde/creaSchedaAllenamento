@@ -2,20 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import VIDEO_OPTIONS from './data/esercizi';
+
 
 // Video options with expanded keywords for better filtering
-const VIDEO_OPTIONS = {
-  "Panca Piana": "http://example.com/panca-piana",
-  "Panca Inclinata": "http://example.com/panca-inclinata", 
-  "Panca Declinata": "http://example.com/panca-declinata",
-  "Addominali Crunch": "http://example.com/crunch",
-  "Addominali Planking": "http://example.com/planking",
-  "Bicipiti Curl Manubri": "http://example.com/bicipiti-curl",
-  "Bicipiti Curl Bilanciere": "http://example.com/bicipiti-manubri",
-  "Squat Frontale": "http://example.com/squat",
-  "Squat Posteriore": "http://example.com/squat-posteriore",
-  "Leg Press": "http://example.com/leg-press",
-};
+
 
 const WorkoutScheduleCreator = () => {
   const [isClient, setIsClient] = useState(false);
@@ -149,7 +140,7 @@ const WorkoutScheduleCreator = () => {
       ]);
   
       autoTable(pdf, {
-        head: [['Esercizio', 'Serie', 'Minuti Riposo', 'Video URL']],
+        head: [['Esercizio', 'Serie', 'Riposo', 'Video']],
         body: tableData,
         startY: yOffset + 10,
         margin: { left: 20 },
