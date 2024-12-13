@@ -5,3 +5,12 @@
 body{
   background-color: #111518;
 }
+
+.imgNico{
+  width: 300px;
+  height: 600px;
+  background: url(/img/nicola.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no repeat;
+}
