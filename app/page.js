@@ -202,7 +202,7 @@ const WorkoutScheduleCreator = () => {
 
   return (
     <>
-      <div className="p-4 max-w-4xl mx-auto md:block hidden">
+      <div className="p-4 max-w-4xl mx-auto ">
         {/* Header con titolo e data */}
         <div className="bg-black100 shadow rounded-lg p-6 mb-6">
           <input
@@ -234,129 +234,139 @@ const WorkoutScheduleCreator = () => {
               {day.name}
             </h2>
 
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="text-left p-2 border-b bg-orange-600 text-white">
-                    Esercizio
-                  </th>
-                  <th className="text-left p-2 border-b bg-orange-600 text-white">
-                    Serie
-                  </th>
-                  <th className="text-left p-2 border-b bg-orange-600 text-white">
-                    Minuti Riposo
-                  </th>
-                  <th className="text-left p-2 border-b bg-orange-600 text-white">
-                    Video URL
-                  </th>
-                  <th className="w-20 border-b bg-orange-600"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {day.exercises.map((exercise, exerciseIndex) => {
-                  // Filtra le opzioni video in base al nome dell'esercizio
-                  const filteredVideoOptions = filterVideoOptions(
-                    exercise.name
-                  );
+            <div
+              className="overflow-x-auto pb-2 
+              [&::-webkit-scrollbar]:w-3 
+              [&::-webkit-scrollbar]:bg-black200
+              [&::-webkit-scrollbar]:rounded-full
+              [&::-webkit-scrollbar-thumb]:rounded-full 
+              [&::-webkit-scrollbar-thumb]:bg-orange-800
+              [&::-webkit-scrollbar-track]:bg-transparent"
+            >
+              <table className="w-[800px]">
+                <thead>
+                  <tr>
+                    <th className="text-left p-2 border-b bg-orange-600 text-white">
+                      Esercizio
+                    </th>
+                    <th className="text-left p-2 border-b bg-orange-600 text-white">
+                      Serie
+                    </th>
+                    <th className="text-left p-2 border-b bg-orange-600 text-white">
+                      Minuti Riposo
+                    </th>
+                    <th className="text-left p-2 border-b bg-orange-600 text-white">
+                      Video URL
+                    </th>
+                    <th className="w-20 border-b bg-orange-600"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {day.exercises.map((exercise, exerciseIndex) => {
+                    // Filtra le opzioni video in base al nome dell'esercizio
+                    const filteredVideoOptions = filterVideoOptions(
+                      exercise.name
+                    );
 
-                  return (
-                    <tr key={exerciseIndex}>
-                      <td className="p-2">
-                        <input
-                          type="text"
-                          value={exercise.name}
-                          onChange={(e) =>
-                            updateExercise(
-                              dayIndex,
-                              exerciseIndex,
-                              "name",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Nome esercizio"
-                          className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <input
-                          type="text"
-                          value={exercise.sets}
-                          onChange={(e) =>
-                            updateExercise(
-                              dayIndex,
-                              exerciseIndex,
-                              "sets",
-                              e.target.value
-                            )
-                          }
-                          placeholder="3x12"
-                          className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <input
-                          type="text"
-                          value={exercise.restMinutes}
-                          onChange={(e) =>
-                            updateExercise(
-                              dayIndex,
-                              exerciseIndex,
-                              "restMinutes",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Minuti riposo"
-                          className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                        />
-                      </td>
-                      <td className="p-2">
-                        <select
-                          value={exercise.videoUrl}
-                          onChange={(e) =>
-                            updateExercise(
-                              dayIndex,
-                              exerciseIndex,
-                              "videoUrl",
-                              e.target.value
-                            )
-                          }
-                          className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
-                        >
-                          <option className="bg-black100" value="">
-                            Seleziona un video
-                          </option>
-                          {Object.entries(filteredVideoOptions).map(
-                            ([name, url]) => (
-                              <option
-                                className="bg-black100"
-                                key={name}
-                                value={url}
-                              >
-                                {name}
-                              </option>
-                            )
-                          )}
-                        </select>
-                      </td>
-                      <td className="p-2">
-                        <button
-                          onClick={() =>
-                            removeExercise(dayIndex, exerciseIndex)
-                          }
-                          className="p-2 text-red-500 hover:scale-150 rounded text-xl"
-                        >
-                          ×
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                    return (
+                      <tr key={exerciseIndex}>
+                        <td className="pE-2">
+                          <input
+                            type="text"
+                            value={exercise.name}
+                            onChange={(e) =>
+                              updateExercise(
+                                dayIndex,
+                                exerciseIndex,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Nome esercizio"
+                            className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            value={exercise.sets}
+                            onChange={(e) =>
+                              updateExercise(
+                                dayIndex,
+                                exerciseIndex,
+                                "sets",
+                                e.target.value
+                              )
+                            }
+                            placeholder="3x12"
+                            className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            value={exercise.restMinutes}
+                            onChange={(e) =>
+                              updateExercise(
+                                dayIndex,
+                                exerciseIndex,
+                                "restMinutes",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Minuti riposo"
+                            className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <select
+                            value={exercise.videoUrl}
+                            onChange={(e) =>
+                              updateExercise(
+                                dayIndex,
+                                exerciseIndex,
+                                "videoUrl",
+                                e.target.value
+                              )
+                            }
+                            className="w-full p-2 border rounded focus:outline-none focus:border-orange-600 text-white bg-transparent"
+                          >
+                            <option className="bg-black100" value="">
+                              Seleziona un video
+                            </option>
+                            {Object.entries(filteredVideoOptions).map(
+                              ([name, url]) => (
+                                <option
+                                  className="bg-black100"
+                                  key={name}
+                                  value={url}
+                                >
+                                  {name}
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </td>
+                        <td className="p-2">
+                          <button
+                            onClick={() =>
+                              removeExercise(dayIndex, exerciseIndex)
+                            }
+                            className="p-2 text-red-500 hover:scale-150 rounded text-xl text-center"
+                          >
+                            ×
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             <button
               onClick={() => addExercise(dayIndex)}
-              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-3xl hover:bg-orange-800"
+              className="mt-4 px-4 py-2 hover:text-orange-600 text-white rounded-3xl"
             >
               + Aggiungi Esercizio
             </button>
@@ -377,12 +387,6 @@ const WorkoutScheduleCreator = () => {
           >
             Scarica PDF
           </button>
-        </div>
-      </div>
-      <div  className="p-4 h-screen flex items-center justify-center md:hidden flex-col">
-        <h1 className="text-center text-orange-600 text-2xl">Entra da computer stronzo</h1>
-        <div className="imgNico">
-
         </div>
       </div>
     </>
