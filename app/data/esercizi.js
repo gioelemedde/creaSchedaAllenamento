@@ -33,8 +33,8 @@ const VIDEO_OPTIONS = {
   "Shoulder Press Machine": "https://www.adtraining.it/esercizi/shoulderPressMachine",
   "Rematore con Manubri": "https://www.adtraining.it/esercizi/rematoreMnb",
   "Shoulder Press con Manubri": "https://www.adtraining.it/esercizi/shoulderPressMnb",
-  "Spin Press 30° con Manubri": "https://www.adtraining.it/esercizi/spinte30°Mnb",
-  "Spin Press con Manubri": "https://www.adtraining.it/esercizi/spinteMnb",
+  "Spinte 30° con Manubri": "https://www.adtraining.it/esercizi/spinte30°Mnb",
+  "Spinte con Manubri": "https://www.adtraining.it/esercizi/spinteMnb",
   "Tricipiti Machine": "https://www.adtraining.it/esercizi/tricipesMachine",
   "Tricipiti Estensioni": "https://www.adtraining.it/esercizi/tricipitiEstensioni",
   "Vertical Row": "https://www.adtraining.it/esercizi/verticalRow"
